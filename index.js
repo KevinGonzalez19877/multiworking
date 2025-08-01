@@ -4,20 +4,21 @@ const multer = require("multer");
 const path = require("path");
 const app = express();
  let conexion = mysql.createConnection({
-    host: "sql207.byethost12.com",
-    user:   "b12_39602109",
-    password: "cenicient9",
-    database: "b12_39602109_miapp"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 app.set("view engine", "ejs");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/views', express.static('views'));
 
 // Configuración de almacenamiento para guardar en imagenes/usuario
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "imagenes/usuarios/");
+        cb(null, "views");
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname));
@@ -44,7 +45,7 @@ app.post("/validar", upload.single("fotodeperfil"), function (req, res) {
     let telefono = datos.telefono;
     let ubicacion = datos.ubicacion;
     let sexo = datos.sexo;
-    let fotodeperfil = archivo ?"imagenes/usuarios"+ archivo.filename : null; // Verifica si se subió una foto de perfil
+    let fotodeperfil = archivo ?"views"+ archivo.filename : null; // Verifica si se subió una foto de perfil
     let correo = datos.correo;
     let contrasena = datos.contrasena;
    
@@ -77,3 +78,4 @@ if (error) {
 app.listen(3600, function () {
     console.log("Server is running on port 3600");
 });
+
